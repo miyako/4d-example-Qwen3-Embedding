@@ -74,30 +74,4 @@ n_gpu_layers: 0}
 $huggingface:=cs:C1710.event.huggingface.new($folder; $URL; $path)
 $huggingfaces:=cs:C1710.event.huggingfaces.new([$huggingface])
 
-$llama:=cs.llama.llama.new($port; $huggingfaces; $homeFolder; $options; $event)
-
-/*
-
-ONNX Runtime: 
-
-use int8 quantisation
-
-*/
-
-$homeFolder:=Folder:C1567(fk home folder:K87:24).folder(".ONNX")
-$port:=8081
-$options:={pooling: "last-token"}
-
-/*
-important notice: onnx-genai caps context at 8192 to avoid swapping
-the onnx runtime flash attention uses more memory than gguf 
-*/
-
-$folder:=$homeFolder.folder("Qwen3-Embedding-0.6B")
-$path:="Qwen3-Embedding-0.6B-onnx-int8"
-$URL:="keisuke-miyako/Qwen3-Embedding-0.6B-onnx-int8"
-
-$huggingface:=cs:C1710.event.huggingface.new($folder; $URL; $path; "embedding"; ($URL="@-f16" || ($URL="@-f32")) ? "model.onnx" : "model_quantized.onnx")
-$huggingfaces:=cs:C1710.event.huggingfaces.new([$huggingface])
-
-// $ONNX:=cs:C1710.ONNX.ONNX.new($port; $huggingfaces; $homeFolder; $options; $event)
+$llama:=cs:C1710.llama.llama.new($port; $huggingfaces; $homeFolder; $options; $event)
