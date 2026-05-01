@@ -12,19 +12,20 @@ $AIClient:=cs.AIKit.OpenAI.new()
 
 $AIClient.baseURL:="http://127.0.0.1:8080/v1"  // llama-server
 
-$query:="Instruct: Retrieve text that answers the question\nQuery: "+"What is the TCP port number used by 4D Server?"
+$query:=\
+"Instruct: クエリを与えるので、与えられたWeb検索クエリに答える関連文章を検索してください。\n"\
++\
+"Query: 4D Serverが使用するTCPポート番号を教えて?"
 
 var $batch : cs.AIKit.OpenAIEmbeddingsResult
 $batch:=$AIClient.embeddings.create($query)
 
 If ($batch.success)
 	$vector:=$batch.embedding.embedding
-	var $comparison:={vector: $vector; metric: mk cosine; threshold: 0.6}
+	var $comparison:={vector: $vector; metric: mk cosine; threshold: 0.7}
 	var $results:=ds.Documents.query("Embeddings > :1"; $comparison)
 	If ($results.length#0)
 		ALERT($results.first().Text)
 	End if 
-End if
+End if 
 ```
-
-<img width="480" height="542" alt="" src="https://github.com/user-attachments/assets/442fe6c5-e720-4ea6-9909-a23b747d3380" />
